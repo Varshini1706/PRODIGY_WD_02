@@ -1,47 +1,76 @@
-let timerDisplay = document.querySelector('.timerDisplay');
-let stopBtn = document.getElementById('stopBtn');
-let startBtn = document.getElementById('startBtn');
-let resetBtn = document.getElementById('resetBtn');
+var time_ele = document.getElementsByClassName("time")[0];
+var start_btn = document.getElementById("start");
+var lap_btn = document.getElementById("lap");
+var stop_btn = document.getElementById("stop");
+var reset_btn = document.getElementById("reset");
+var l1 = document.getElementById("lap1");
+var l2 = document.getElementById("lap2");
+var l3 = document.getElementById("lap3");
+var l4 = document.getElementById("lap4");
+var l5 = document.getElementById("lap5");
 
-let msec = 00;
-let secs = 00;
-let mins = 00;
+let seconds = 0;
+let interval = null;
+let ctr=0;
 
-let timerId = null;
+start_btn.addEventListener("click", start);
+lap_btn.addEventListener("click", lap);
+stop_btn.addEventListener("click", stop);
+reset_btn.addEventListener("click", reset);
 
-startBtn.addEventListener('click', function(){
-    if(timerId !== null){
-        clearInterval(timerId);
+
+function timer() {
+    seconds++;
+
+
+    let hrs = Math.floor(seconds / 3600);
+    let mins = Math.floor((seconds - (hrs * 3600)) / 60);
+    let sec = seconds % 60;
+
+    if(sec < 10)
+        sec = '0' + sec;
+
+    if(mins < 10)
+        mins = '0' + mins;
+
+    if(hrs < 10)
+        hrs = '0' + hrs;
+
+    time_ele.innerHTML = `${hrs}:${mins}:${sec}`;
+}
+
+function start() {
+    if(interval)
+    {
+        return;
     }
-    timerId = setInterval(startTimer, 10);
-});
 
-stopBtn.addEventListener('click', function(){
-    clearInterval(timerId);
-});
+    interval = setInterval(timer, 1000);
+}
 
-resetBtn.addEventListener('click', function(){
-    clearInterval(timerId);
-    timerDisplay.innerHTML = `00 : 00 : 00`;
-    msec = secs = mins = 00;
-});
+function lap() {
+    ctr++;
+    if(ctr%5==1)
+        l1.innerHTML="Lap "+ ctr+ ":  " + time_ele.innerHTML;
+    if (ctr%5==2)
+        l2.innerHTML="Lap "+ ctr+ ":  " + time_ele.innerHTML;
+    if (ctr%5==3)
+        l3.innerHTML="Lap "+ ctr+ ":  " + time_ele.innerHTML;
+    if (ctr%5==4)
+        l4.innerHTML="Lap "+ ctr+ ":  " + time_ele.innerHTML;
+    if (ctr%5==0)
+        l5.innerHTML="Lap "+ ctr+ ":  " + time_ele.innerHTML;
 
-function startTimer(){
-    msec++;
-    if(msec == 100){
-        msec = 0;
-        secs++;
-        if(secs == 60){
-            secs = 0;
-mins++;
-        }
-    }
+}
 
-    let msecString = msec < 10 ? `0${msec}` : msec;
-    let secsString = secs < 10 ? `0${secs}` : secs;
-    let minsString = mins < 10 ? `0${mins}` : mins;
-    
+function stop() {
+    clearInterval(interval);
+    interval = null;
+}
 
-    timerDisplay.innerHTML = `${minsString} : ${secsString} : ${msecString}`;
-
+function reset() {
+    stop();
+    seconds = 0;
+    ctr=0;
+    time_ele.innerHTML = "00:00:00";
 }
